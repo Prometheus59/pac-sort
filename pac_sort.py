@@ -31,9 +31,34 @@ def make_folds(dataset, fold_count):
     return data_folds
 
 
+def precision_test(guess, real):
+    valid = 0
+    length = len(real)
+    for x in range(length):
+        if (guess[x] == real[x]):
+            valid += 1
+    return valid / float(len(real)) * 100.0
+
+
 def validation(dataset, algo, fold_count, neighbour_count):
     # Split into folds
     folds = make_folds(dataset, fold_count)
+    ranks = list()
+    for fold in folds:
+        test_set = list()
+        training_set = list(folds)
+        training_set.remove(fold)
+        # Get sum of all items in training set
+        training_set = sum(training_set, [])
+        for x in fold:
+            x_dup = list(x)
+            x_dup[-1] = None
+            test_set.append(x_dup)
+        estimate = algo(training_set, test_set, neighbour_count)
+        real = [element[-1] for element in fold]
+        precision = precision_test(estimate, real)
+        ranks.append(precision)
+    return ranks
 
 
 def euclidean_dist(vector1, vector2):
