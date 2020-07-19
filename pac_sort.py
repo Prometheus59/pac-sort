@@ -40,7 +40,7 @@ def precision_test(guess, real):
     return valid / float(len(real)) * 100.0
 
 
-def validation(dataset, algo, fold_count, neighbour_count):
+def validate(dataset, algo, fold_count, neighbour_count):
     # Split into folds
     folds = make_folds(dataset, fold_count)
     ranks = list()
@@ -106,5 +106,30 @@ test_dataset = [[2.7810836, 2.550537003, 0],
                 [7.673756466, 3.508563011, 1]]
 
 
-prediction = classify(test_dataset, test_dataset[0], 3)
-print('Expected %d, Got %d.' % (test_dataset[0][-1], prediction))
+# prediction = classify(test_dataset, test_dataset[0], 3)
+# print('Expected %d, Got %d.' % (test_dataset[0][-1], prediction))
+def knn(train_set, test_set, neighbour_count):
+    results = list()
+    for item in test_set:
+        result = classify(train_set, item, neighbour_count)
+        results.append(result)
+    return(results)
+
+
+# TODO: Implement str_column_to_float & str_column_to_int
+# TODO: Change data
+# Test the knn on the Iris Flowers dataset
+seed(1)
+filename = 'iris.csv'
+dataset = import_data(filename)
+# for i in range(len(dataset[0])-1):
+#     str_column_to_float(dataset, i)
+# # convert class column to integers
+# str_column_to_int(dataset, len(dataset[0])-1)
+# # evaluate algorithm
+n_folds = 5
+num_neighbors = 5
+scores = validate(
+    dataset, knn, n_folds, num_neighbors)
+print('Scores: %s' % scores)
+print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
