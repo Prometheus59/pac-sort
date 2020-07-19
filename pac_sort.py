@@ -17,6 +17,25 @@ def import_data(file):
     return data
 
 
+def make_folds(dataset, fold_count):
+    data_folds = list()
+    data_dup = list(dataset)
+    fold_size = int(len(dataset) / fold_count)
+    for _ in range(fold_count):  # TODO: Test with _ -> x
+        fold = list()
+        while len(fold) < fold_size:
+            data_length = len(data_dup)
+            remove = randrange(data_length)
+            fold.append(data_dup.pop(remove))
+        data_folds.append(fold)
+    return data_folds
+
+
+def validation(dataset, algo, fold_count, neighbour_count):
+    # Split into folds
+    folds = make_folds(dataset, fold_count)
+
+
 def euclidean_dist(vector1, vector2):
     size = len(vector1)-1   # Ignore output value in csv file
     dist = 0
