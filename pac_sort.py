@@ -10,6 +10,22 @@ def euclidean_dist(vector1, vector2):
     return sqrt(dist)
 
 
+def get_dist(tuple):
+    return tuple[1]
+
+
+def get_neighbours(train, test_row, neighbour_count):
+    dists = list()
+    for train_row in train:
+        dist = euclidean_dist(test_row, train_row)
+        dists.append((train_row, dist))
+    dists.sort(key=get_dist)
+    neighbours = list()
+    for i in range(neighbour_count):
+        neighbours.append(dists[i][0])
+    return neighbours
+
+
 test_dataset = [[2.7810836, 2.550537003, 0],
                 [1.465489372, 2.362125076, 0],
                 [3.396561688, 4.400293529, 0],
@@ -21,7 +37,6 @@ test_dataset = [[2.7810836, 2.550537003, 0],
                 [8.675418651, -0.242068655, 1],
                 [7.673756466, 3.508563011, 1]]
 
-row0 = test_dataset[0]
-for row in test_dataset:
-    distance = euclidean_dist(row0, row)
-    print(distance)
+neighbours = get_neighbours(test_dataset, test_dataset[0], 3)
+for neighbour in neighbours:
+    print(neighbour)
