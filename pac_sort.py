@@ -1,5 +1,20 @@
 from math import sqrt
+from random import seed
+from random import randrange
+from csv import reader
 # Import Dataset Here
+
+
+def import_data(file):
+    data = list()
+    with open(file, 'r') as file:
+        excel_data = reader(file)
+        for x in excel_data:
+            if not x:
+                continue
+            else:
+                data.append(x)
+    return data
 
 
 def euclidean_dist(vector1, vector2):
