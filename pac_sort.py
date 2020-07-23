@@ -2,10 +2,10 @@ from math import sqrt
 from random import seed
 from random import randrange
 from csv import reader
-# Import Dataset Here
 
 
 def import_data(file):
+    # File must in CSV (MS-DOS) format
     data = list()
     with open(file, 'r') as file:
         excel_data = reader(file)
@@ -21,7 +21,7 @@ def make_folds(dataset, fold_count):
     data_folds = list()
     data_dup = list(dataset)
     fold_size = int(len(dataset) / fold_count)
-    for _ in range(fold_count):  # TODO: Test with _ -> x
+    for _ in range(fold_count):
         fold = list()
         while len(fold) < fold_size:
             data_length = len(data_dup)
@@ -116,20 +116,26 @@ def knn(train_set, test_set, neighbour_count):
     return(results)
 
 
-# TODO: Implement str_column_to_float & str_column_to_int
-# TODO: Change data
-# Test the knn on the Iris Flowers dataset
+def str_to_fp(data, str_col):
+    for x in data:
+        x[str_col] = float(x[str_col].strip())
+
+
+# TODO: Implement str_column_to_int?
+# Test the knn on the keywords dataset
 seed(1)
-filename = 'iris.csv'
+# Import Dataset Here
+filename = 'keywords.csv'
 dataset = import_data(filename)
-# for i in range(len(dataset[0])-1):
-#     str_column_to_float(dataset, i)
+for i in range(len(dataset[0])-1):
+    str_to_fp(dataset, i)
 # # convert class column to integers
 # str_column_to_int(dataset, len(dataset[0])-1)
 # # evaluate algorithm
-n_folds = 5
-num_neighbors = 5
+fold_count = 5
+neighbour_count = 5
 scores = validate(
-    dataset, knn, n_folds, num_neighbors)
-print('Scores: %s' % scores)
-print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+    dataset, knn, fold_count, neighbour_count)
+print('Scores for k-fold cross validation (5 folds): %s' % scores)
+print('Mean Accuracy (Avg. Error over all folds): %.3f%%' %
+      (sum(scores)/float(len(scores))))
