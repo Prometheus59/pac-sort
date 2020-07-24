@@ -112,10 +112,18 @@ def knn(train_set, test_set, neighbour_count):
 #   a floating point number
 def str_to_fp(data, str_col):
     for x in data:
-        x[str_col] = float(x[str_col].strip())
+        element = x[str_col].strip()
+        x[str_col] = float(element)
 
 
-# TODO: Implement str_column_to_int?
+def make_prediction(training_set, testing_row, neighbour_count):
+    neighbours = get_neighbours(training_set, testing_row, neighbour_count)
+    results = [result[-1] for result in neighbours]
+    # Return result with the highest count
+    return max(set(results), key=results.count)
+
+
+# Driver Code
 # Evaluate accuracy of knn algorithm implementation
 seed(1)
 # Import Dataset Here
@@ -136,3 +144,9 @@ for index, rank in enumerate(rankings):
     print('Fold %d: %s' % (index, rank))
 print('\nMean Accuracy (Avg. Error over all folds): %.3f %%' %
       (sum(rankings)/float(len(rankings))))
+
+
+# New prediction
+new_data = [12, 2, 14]
+result = make_prediction(dataset, new_data, neighbour_count)
+print("The prediction for " + str(new_data) + " is " + result)
