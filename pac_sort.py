@@ -43,6 +43,7 @@ def precision_test(guess, real):
 def validate(dataset, algo, fold_count, neighbour_count):
     # Split into folds
     folds = make_folds(dataset, fold_count)
+    # store rankings
     ranks = list()
     for fold in folds:
         test_set = list()
@@ -56,7 +57,8 @@ def validate(dataset, algo, fold_count, neighbour_count):
             test_set.append(x_dup)
         estimate = algo(training_set, test_set, neighbour_count)
         real = [element[-1] for element in fold]
-        precision = precision_test(estimate, real)
+        # Truncate precision result to 3 decimal places
+        precision = float('%.3f' % (precision_test(estimate, real)))
         ranks.append(precision)
     return ranks
 
@@ -69,6 +71,7 @@ def euclidean_dist(vector1, vector2):
     return sqrt(dist)
 
 
+# return first element of tuple
 def get_dist(tuple):
     return tuple[1]
 
@@ -93,21 +96,10 @@ def classify(training_set, test_row, neighbour_count):
     results = [row[-1] for row in neighbours]  # Get last element of each row
     return max(set(results), key=results.count)
 
-
-test_dataset = [[2.7810836, 2.550537003, 0],
-                [1.465489372, 2.362125076, 0],
-                [3.396561688, 4.400293529, 0],
-                [1.38807019, 1.850220317, 0],
-                [3.06407232, 3.005305973, 0],
-                [7.627531214, 2.759262235, 1],
-                [5.332441248, 2.088626775, 1],
-                [6.922596716, 1.77106367, 1],
-                [8.675418651, -0.242068655, 1],
-                [7.673756466, 3.508563011, 1]]
-
-
 # prediction = classify(test_dataset, test_dataset[0], 3)
 # print('Expected %d, Got %d.' % (test_dataset[0][-1], prediction))
+
+
 def knn(train_set, test_set, neighbour_count):
     results = list()
     for item in test_set:
@@ -116,13 +108,15 @@ def knn(train_set, test_set, neighbour_count):
     return(results)
 
 
+# Converts each element of the data array to
+#   a floating point number
 def str_to_fp(data, str_col):
     for x in data:
         x[str_col] = float(x[str_col].strip())
 
 
 # TODO: Implement str_column_to_int?
-# Test the knn on the keywords dataset
+# Evaluate accuracy of knn algorithm implementation
 seed(1)
 # Import Dataset Here
 filename = 'keywords.csv'
@@ -134,8 +128,11 @@ for i in range(len(dataset[0])-1):
 # # evaluate algorithm
 fold_count = 5
 neighbour_count = 5
-scores = validate(
+rankings = validate(
     dataset, knn, fold_count, neighbour_count)
-print('Scores for k-fold cross validation (5 folds): %s' % scores)
-print('Mean Accuracy (Avg. Error over all folds): %.3f%%' %
-      (sum(scores)/float(len(scores))))
+print('\nResults for k-fold cross validation (5 folds): ')  # %s' % scores)
+
+for index, rank in enumerate(rankings):
+    print('Fold %d: %s' % (index, rank))
+print('\nMean Accuracy (Avg. Error over all folds): %.3f %%' %
+      (sum(rankings)/float(len(rankings))))
