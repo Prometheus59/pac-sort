@@ -40,11 +40,11 @@ def precision_test(guess, real):
     return valid / float(len(real)) * 100.0
 
 
-def validate(dataset, algo, fold_count, neighbour_count):
-    # Split into folds
-    folds = make_folds(dataset, fold_count)
+def validate(dataset, fold_count, neighbour_count):
     # store rankings
     ranks = list()
+    # Split into folds
+    folds = make_folds(dataset, fold_count)
     for fold in folds:
         test_set = list()
         training_set = list(folds)
@@ -55,7 +55,7 @@ def validate(dataset, algo, fold_count, neighbour_count):
             x_dup = list(x)
             x_dup[-1] = None
             test_set.append(x_dup)
-        estimate = algo(training_set, test_set, neighbour_count)
+        estimate = knn(training_set, test_set, neighbour_count)
         real = [element[-1] for element in fold]
         # Truncate precision result to 3 decimal places
         precision = float('%.3f' % (precision_test(estimate, real)))
@@ -127,7 +127,7 @@ def make_prediction(training_set, testing_row, neighbour_count):
 # Evaluate accuracy of knn algorithm implementation
 seed(1)
 # Import Dataset Here
-filename = 'keywords.csv'
+filename = 'boolean.csv'
 dataset = import_data(filename)
 for i in range(len(dataset[0])-1):
     str_to_fp(dataset, i)
@@ -137,16 +137,16 @@ for i in range(len(dataset[0])-1):
 fold_count = 5
 neighbour_count = 5
 rankings = validate(
-    dataset, knn, fold_count, neighbour_count)
-print('\nResults for k-fold cross validation (5 folds): ')  # %s' % scores)
+    dataset, fold_count, neighbour_count)
+print('\nResults for k-fold cross validation (5 folds): ')
 
 for index, rank in enumerate(rankings):
-    print('Fold %d: %s' % (index, rank))
+    print('Fold %d: %s%%' % (index+1, rank))
 print('\nMean Accuracy (Avg. Error over all folds): %.3f %%' %
       (sum(rankings)/float(len(rankings))))
 
 
 # New prediction
-new_data = [12, 2, 14]
+new_data = [1, 1, 0]
 result = make_prediction(dataset, new_data, neighbour_count)
 print("The prediction for " + str(new_data) + " is " + result)
