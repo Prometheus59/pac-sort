@@ -125,17 +125,22 @@ def make_prediction(training_set, testing_row, neighbour_count):
 
 # Driver Code
 # Evaluate accuracy of knn algorithm implementation
+
+# Set seed(1) to ensure same results each time
 seed(1)
+
 # Import Dataset Here
-filename = 'boolean.csv'
+filename = 'keywords.csv'
 dataset = import_data(filename)
 for i in range(len(dataset[0])-1):
     str_to_fp(dataset, i)
-# # convert class column to integers
-# str_column_to_int(dataset, len(dataset[0])-1)
-# # evaluate algorithm
+
+# Number of folds for k-folds validation
 fold_count = 5
+# Checking 5 nearest neighbours
 neighbour_count = 5
+
+# Get rankings
 rankings = validate(
     dataset, fold_count, neighbour_count)
 print('\nResults for k-fold cross validation (5 folds): ')
@@ -147,6 +152,7 @@ print('\nMean Accuracy (Avg. Error over all folds): %.3f %%' %
 
 
 # New prediction
+# Enter data into new_data feature vector
 new_data = [1, 1, 0]
 result = make_prediction(dataset, new_data, neighbour_count)
 print("The prediction for " + str(new_data) + " is " + result)
