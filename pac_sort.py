@@ -4,6 +4,7 @@ from random import randrange
 from csv import reader
 
 
+# Import csv file
 def import_data(file):
     # File must in CSV (MS-DOS) format
     data = list()
@@ -17,6 +18,7 @@ def import_data(file):
     return data
 
 
+# Create folds for K-fold cross validation
 def make_folds(dataset, fold_count):
     data_folds = list()
     data_dup = list(dataset)
@@ -40,6 +42,8 @@ def precision_test(guess, real):
     return valid / float(len(real)) * 100.0
 
 
+# K-fold Cross Validation
+# A method for estimating test error using training data
 def validate(dataset, fold_count, neighbour_count):
     # store rankings
     ranks = list()
@@ -96,10 +100,8 @@ def classify(training_set, test_row, neighbour_count):
     results = [row[-1] for row in neighbours]  # Get last element of each row
     return max(set(results), key=results.count)
 
-# prediction = classify(test_dataset, test_dataset[0], 3)
-# print('Expected %d, Got %d.' % (test_dataset[0][-1], prediction))
 
-
+# K-nearest-neighbours algorithm
 def knn(train_set, test_set, neighbour_count):
     results = list()
     for item in test_set:
@@ -109,24 +111,15 @@ def knn(train_set, test_set, neighbour_count):
 
 
 # Converts each element of the data array to
-#   a floating point number
+#  a floating point number
 def str_to_fp(data, str_col):
     for x in data:
         element = x[str_col].strip()
         x[str_col] = float(element)
 
 
-def make_prediction(training_set, testing_row, neighbour_count):
-    neighbours = get_neighbours(training_set, testing_row, neighbour_count)
-    results = [result[-1] for result in neighbours]
-    # Return result with the highest count
-    return max(set(results), key=results.count)
-
-
 # Driver Code
-# Evaluate accuracy of knn algorithm implementation
-
-# Set seed(1) to ensure same results each time
+# Set seed to ensure same pseudo-random results each time
 seed(1)
 
 # Import Dataset Here
@@ -137,22 +130,23 @@ for i in range(len(dataset[0])-1):
 
 # Number of folds for k-folds validation
 fold_count = 5
-# Checking 5 nearest neighbours
+# Number of nearest neighbours to use
 neighbour_count = 5
 
-# Get rankings
-rankings = validate(
-    dataset, fold_count, neighbour_count)
-print('\nResults for k-fold cross validation (5 folds): ')
+# Evaluate accuracy of knn algorithm implementation
+rankings = validate(dataset, fold_count, neighbour_count)
+
+print('\nResults for K-fold Cross Validation (' + str(fold_count) + ' folds): ')
 
 for index, rank in enumerate(rankings):
     print('Fold %d: %s%%' % (index+1, rank))
-print('\nMean Accuracy (Avg. Error over all folds): %.3f %%' %
+
+print('\nAverage Error over all folds: %.3f %%' %
       (sum(rankings)/float(len(rankings))))
 
 
 # New prediction
-# Enter data into new_data feature vector
-new_data = [1, 1, 0]
-result = make_prediction(dataset, new_data, neighbour_count)
+# Enter data into a new_data feature vector
+new_data = [1, 0, 1]
+result = classify(dataset, new_data, neighbour_count)
 print("The prediction for " + str(new_data) + " is " + result)
